@@ -1,0 +1,14 @@
+.boardArticle table {width:100%;}
+
+.boardArticle th {padding:5px 0;border-top:2px solid #666;border-bottom:1px solid #666}
+
+.boardArticle td {padding:8px 0;border-bottom:1px solid #666}
+.boardArticle .no {width:5%;text-align:center}
+.boardArticle .title {
+    width: 30%;
+    text-align: center;
+}
+.boardArticle .author {width:20%;text-align:center}
+.boardArticle .date {width:5%;text-align:center}
+.boardArticle .hit {width:20%;text-align:center}
+

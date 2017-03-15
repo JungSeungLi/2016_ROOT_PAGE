@@ -1,0 +1,67 @@
+<?php
+include "sqlconn.php";
+header("Content-Type:text/html; charset=utf-8");
+session_start();
+$content=$_POST['answer'];
+$content=str_replace("'","",$content);
+$name=$_SESSION['student_id'];
+$connect=mysqli_connect("localhost","root","4dminroot!","userimp");
+$date=date("Y/m/d H:i:s",mktime(date("H"),date("i"),date("s"),date("m"),date("d"),date("Y")));
+$query="insert into answer(name,content,date)
+		values('$name','$content','$date')";
+$stmh = $pdo->prepare($query);
+$stmh->execute();
+$query="select * from question where answer='$content'";
+$info=mysqli_query($connect,$query);
+$row=mysqli_fetch_assoc($info);
+if($row['answer']==$content){
+	$query="select clearidx from user_imp where student_id='$name'";
+	$iinfo=mysqli_query($connect,$query);
+	$rrow=mysqli_fetch_assoc($iinfo);
+	$clearidx=$rrow['clearidx'];
+	$cclearidx=explode(',',$rrow['clearidx']);
+	$idx=$row['idx'];
+	for($i=0;$i<count($cclearidx);$i++){
+	if($cclearidx[$i]==$idx){
+	?>
+	<script>
+	alert("이미 푸셨습니다!");
+	location.href='ctf.php';
+	</script>
+	<?php
+	exit();
+	}
+	}
+	$clearidx=$clearidx.','.$idx;
+	$point=$row['point'];
+	$query="update user_imp set score=score+$point where student_id='$name'";
+	$stmh=$pdo->prepare($query);
+	$stmh->execute();
+	$query="update question set clearer=clearer+1 where answer='$content'";
+	$stmh=$pdo->prepare($query);
+	$stmh->execute();
+	if($point>30){
+	$query="update question set point=point-30 where answer='$content'";
+	$stmh=$pdo->prepare($query);
+	$stmh->execute();
+}
+	$query="update user_imp set clearidx='$clearidx' where student_id='$name'";
+	$stmh=$pdo->prepare($query);
+	$stmh->execute();
+?>
+<script>
+alert("정답!");
+location.href='ctf.php';
+</script>
+<?php
+exit();
+}else{
+	?>
+	<script>
+	alert("틀렸습니다!");
+	location.href='ctf.php';
+	</script>
+	<?php
+	exit();
+}
+?>
